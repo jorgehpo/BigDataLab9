@@ -78,14 +78,14 @@
             var alpha = 0.1
             xrange[0] = d3.min(data, function(d) { return +d[xaxis_name]; }) 
             xrange[1] = d3.max(data, function(d) { return +d[xaxis_name]; })
-            var xdiff = xrange[1]-xrange[0]
+            var xdiff = 0//xrange[1]-xrange[0] -- this is removing points from the plot
             xrange[0] = xrange[0] - xdiff*alpha
             xrange[1] = xrange[1] - xdiff*alpha
 
 
             yrange[0] = d3.min(data, function(d) { return +d[yaxis_name]; })
             yrange[1] = d3.max(data, function(d) { return +d[yaxis_name]; })
-            var ydiff = yrange[1]-yrange[0]
+            var ydiff = 0//yrange[1]-yrange[0] -- this is removing points from the plot
             yrange[0] = yrange[0] - ydiff*alpha
             yrange[1] = yrange[1] - ydiff*alpha
 
@@ -140,7 +140,10 @@
             .axis text {
               font: 8px sans-serif;
             }
-
+	    .svg {
+             width:400px;
+             height:400px 
+             }	
             .axis line,
             .axis path {
               fill: none;
@@ -159,7 +162,7 @@
     <body>
         <h4 id="hovered">chevrolet chevelle malibu</h4> 
         <div class="plot">
-            <svg></svg>
+            <svg class="svg"></svg>
         </div> 
         <div class="ui">
             <div> 
