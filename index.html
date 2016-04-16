@@ -1,0 +1,133 @@
+<html>
+    <head>
+        <title>Big Data - D3 Lab</title>
+        <script src="bower_components/d3/d3.min.js" type="text/javascript"></script>
+        <script src="bower_components/jQuery/dist/jquery.min.js" type="text/javascript"></script>
+
+        <script>
+
+        "use strict";
+
+        var car_data;
+        var available_dimensions;
+        $(document).ready(function(){
+            $("#sel-x").change(function(){
+                draw_chart(car_data);
+            });
+            $("#sel-y").change(function(){
+                draw_chart(car_data);
+            });
+            $("#update").click(function(){
+                filter_chart();
+            });
+            d3.csv("car.csv", function(data){
+                car_data = data;
+                var data_keys = Object.keys(data[0]);
+                available_dimensions = data_keys.splice(1, data_keys.length-2);
+                for (var i = 0; i < available_dimensions.length; i ++){
+                    $('#sel-x').append($("<option></option>")
+                        .attr("value",available_dimensions[i])
+                        .text(available_dimensions[i]));
+                    $('#sel-y').append($("<option></option>")
+                        .attr("value",available_dimensions[i])
+                        .text(available_dimensions[i]));  
+                }
+                $('#sel-x').val('mpg');
+                $('#sel-y').val('displacement');
+                draw_chart(car_data);
+            })
+        });
+
+        function draw_chart(data){
+            var svg = d3.select("svg");
+            var svg_size = [parseFloat(svg.style("width")),parseFloat(svg.style("height"))]
+            var xaxis_name = $("#sel-x").val();
+            var yaxis_name = $("#sel-y").val();
+            var xscale = d3.scale.linear();
+            var yscale = d3.scale.linear();
+
+            //#### Computing scales
+            var xrange = [0, 0];
+            var yrange = [0, 0]
+            
+            xrange[0] = d3.min(data, function(d) { return +d[xaxis_name]; })
+            xrange[1] = d3.max(data, function(d) { return +d[xaxis_name]; })
+
+            yrange[0] = d3.min(data, function(d) { return +d[yaxis_name]; })
+            yrange[1] = d3.max(data, function(d) { return +d[yaxis_name]; })
+
+            console.log(xrange, yrange)
+            console.log(svg_size[0], svg_size[0])
+            
+            
+            xscale.range([50, svg_size[0]-2]).domain(xrange);
+            yscale.range([svg_size[1]-10,50]).domain(yrange);
+            var axisX = d3.svg.axis().scale(xscale).orient("bottom");
+            var axisY = d3.svg.axis().scale(yscale).orient("left");
+            var xAxisGroup = svg.append("g")
+                .attr("transform", "translate(0,"+(svg_size[0]-50)+")");
+            var yAxisGroup = svg.append("g")
+                .attr("transform", "translate(40,10)");
+            
+            var circles = svg.selectAll("circle").data(data, function(obj){
+                //compute objecct id
+                return obj['name'];
+            });
+
+            //Enter
+            circles.enter().append("circle").attr("r", 2);
+
+            //Exit
+            circles.exit().remove();
+
+            // Update
+            circles
+                .attr("cx", function(data){
+                    return (xscale(data[xaxis_name]));
+                })
+                .attr("cy", function(data){
+                    return (yscale(data[yaxis_name]));
+                })
+            xAxisGroup.transition().call(axisX); //Update the X Axis
+            yAxisGroup.transition().call(axisY); //Update the Y Axis
+        };
+
+        function filter_chart(){
+            var min = parseFloat($("#mpg-min").val());
+            var max = parseFloat($("#mpg-max").val());
+
+            var data = car_data.filter(function(d){
+                return parseFloat(d["mpg"]) >= min && parseFloat(d["mpg"]) <= max;
+            });
+            draw_chart(data);
+        }
+        </script>
+        <style type="text/css">
+        .domain{
+            fill:none;
+            stroke:#000000;
+        }
+        </style>
+    </head>
+    <body>
+        <h4 id="hovered">chevrolet chevelle malibu</h4> 
+        <div class="plot">
+            <svg></svg>
+        </div> 
+        <div class="ui">
+            <div> 
+                <label>X-Axis</label> 
+                <select id="sel-x">
+                </select>
+                <label>Y-Axis</label> 
+                <select id="sel-y">
+                </select>
+            </div> 
+            <div>
+                <input id="mpg-min" type="text" value="0" size="10">
+                <input id="mpg-max" type="text" value="30" size="10"> 
+                <button id="update">Query MPG</button>
+            </div>
+        </div>
+    </body> 
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "BigDataLab9",
+  "homepage": "https://github.com/jorgehpo/BigDataLab9",
+  "authors": [
+    "Jorge Ono and Raoni Lourenco"
+  ],
+  "description": "Lab 9 of Big Data Course. D3",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jQuery": "^2.2.3",
+    "d3": "^3.5.16"
+  }
+}
