@@ -6,11 +6,20 @@
 
         <script>
 
+        //Task 2:
+        // +[+!![]+[]+[!![]+!![]]+[]+[!![]+!![]+!![]]]
+
         "use strict";
 
         var car_data;
         var available_dimensions;
+        var xAxisGroup;
+        var yAxisGroup;
+        var svg;
         $(document).ready(function(){
+            svg = d3.select("svg");
+            xAxisGroup = svg.append("g").attr("class", "x axis");
+            yAxisGroup = svg.append("g").attr("class", "x axis");
             $("#sel-x").change(function(){
                 draw_chart(car_data);
             });
@@ -34,40 +43,58 @@
                 }
                 $('#sel-x').val('mpg');
                 $('#sel-y').val('displacement');
+                svg.append("text").attr("id","x_text").attr("class","textaxis");
+                svg.append("text").attr("id","y_text").attr("class","textaxis");
                 draw_chart(car_data);
             })
         });
 
         function draw_chart(data){
-            var svg = d3.select("svg");
             var svg_size = [parseFloat(svg.style("width")),parseFloat(svg.style("height"))]
             var xaxis_name = $("#sel-x").val();
             var yaxis_name = $("#sel-y").val();
             var xscale = d3.scale.linear();
             var yscale = d3.scale.linear();
 
+            var xtext = svg.select("#x_text")
+            var ytext = svg.select("#y_text")
+
+            xtext.text(xaxis_name);
+            ytext.text(yaxis_name);
+
+            xtext.attr("x", svg_size[0] - 60)//svg_size[0] - (xaxis_name.length*10));
+            xtext.attr("y", svg_size[1] - 28);
+            ytext.attr("transform","rotate(90)");
+            ytext.attr("y", -52 );
+
+            
+
             //#### Computing scales
             var xrange = [0, 0];
             var yrange = [0, 0]
             
-            xrange[0] = d3.min(data, function(d) { return +d[xaxis_name]; })
+            var alpha = 0.1
+            xrange[0] = d3.min(data, function(d) { return +d[xaxis_name]; }) 
             xrange[1] = d3.max(data, function(d) { return +d[xaxis_name]; })
+            var xdiff = xrange[1]-xrange[0]
+            xrange[0] = xrange[0] - xdiff*alpha
+            xrange[1] = xrange[1] - xdiff*alpha
+
 
             yrange[0] = d3.min(data, function(d) { return +d[yaxis_name]; })
             yrange[1] = d3.max(data, function(d) { return +d[yaxis_name]; })
+            var ydiff = yrange[1]-yrange[0]
+            yrange[0] = yrange[0] - ydiff*alpha
+            yrange[1] = yrange[1] - ydiff*alpha
 
-            console.log(xrange, yrange)
-            console.log(svg_size[0], svg_size[0])
-            
-            
             xscale.range([50, svg_size[0]-2]).domain(xrange);
-            yscale.range([svg_size[1]-10,50]).domain(yrange);
+            yscale.range([svg_size[1]-25,5]).domain(yrange);
             var axisX = d3.svg.axis().scale(xscale).orient("bottom");
             var axisY = d3.svg.axis().scale(yscale).orient("left");
-            var xAxisGroup = svg.append("g")
-                .attr("transform", "translate(0,"+(svg_size[0]-50)+")");
-            var yAxisGroup = svg.append("g")
-                .attr("transform", "translate(40,10)");
+            xAxisGroup
+                .attr("transform", "translate(0, "+(svg_size[1]-25)+")");
+            yAxisGroup
+                .attr("transform", "translate(50, 0)");
             
             var circles = svg.selectAll("circle").data(data, function(obj){
                 //compute objecct id
@@ -75,7 +102,9 @@
             });
 
             //Enter
-            circles.enter().append("circle").attr("r", 2);
+            circles.enter().append("circle").attr("r", 2).on("mouseover", function(x){
+                $("#hovered").text(x["name"])
+            });
 
             //Exit
             circles.exit().remove();
@@ -102,12 +131,28 @@
             draw_chart(data);
         }
         </script>
+
+
+
         <style type="text/css">
-        .domain{
-            fill:none;
-            stroke:#000000;
-        }
+            .axis text {
+              font: 8px sans-serif;
+            }
+
+            .axis line,
+            .axis path {
+              fill: none;
+              stroke: #000;
+              shape-rendering: crispEdges;
+            }
+
+            .textaxis{
+                font-size: 10px;
+            }
         </style>
+
+
+
     </head>
     <body>
         <h4 id="hovered">chevrolet chevelle malibu</h4> 
