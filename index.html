@@ -76,18 +76,18 @@
             var yrange = [0, 0]
             
             var alpha = 0.1
-            xrange[0] = d3.min(data, function(d) { return +d[xaxis_name]; }) 
+            xrange[0] = d3.min(data, function(d) { return +d[xaxis_name]; })
             xrange[1] = d3.max(data, function(d) { return +d[xaxis_name]; })
-            var xdiff = 0//xrange[1]-xrange[0] -- this is removing points from the plot
+            var xdiff = xrange[1]-xrange[0] 
             xrange[0] = xrange[0] - xdiff*alpha
-            xrange[1] = xrange[1] - xdiff*alpha
+            xrange[1] = xrange[1] + xdiff*alpha
 
 
             yrange[0] = d3.min(data, function(d) { return +d[yaxis_name]; })
             yrange[1] = d3.max(data, function(d) { return +d[yaxis_name]; })
-            var ydiff = 0//yrange[1]-yrange[0] -- this is removing points from the plot
+            var ydiff = yrange[1]-yrange[0]
             yrange[0] = yrange[0] - ydiff*alpha
-            yrange[1] = yrange[1] - ydiff*alpha
+            yrange[1] = yrange[1] + ydiff*alpha
 
             xscale.range([50, svg_size[0]-2]).domain(xrange);
             yscale.range([svg_size[1]-25,5]).domain(yrange);
