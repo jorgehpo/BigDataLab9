@@ -62,8 +62,10 @@
             xtext.text(xaxis_name);
             ytext.text(yaxis_name);
 
-            xtext.attr("x", svg_size[0] - 60)//svg_size[0] - (xaxis_name.length*10));
-            xtext.attr("y", svg_size[1] - 28);
+            xtext.attr("x", svg_size[0])
+            xtext.style("text-anchor","end")
+	    xtext.attr("y", svg_size[1] - 28);
+	    
             ytext.attr("transform","rotate(90)");
             ytext.attr("y", -52 );
 
