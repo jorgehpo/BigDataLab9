@@ -1,0 +1,19 @@
+.axis text {
+      font: 8px sans-serif;
+    }
+    
+.svg {
+     width:400px;
+     height:400px 
+     }  
+     
+.axis line,
+.axis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.textaxis{
+    font-size: 10px;
+}
